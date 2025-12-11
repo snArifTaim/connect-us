@@ -1,4 +1,3 @@
-//src/screens/HomeScreen.tsx
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -26,7 +25,7 @@ export default function HomeScreen() {
           onPress={handleLogout}
           activeOpacity={0.8}
         >
-          <Text className="text-white font-bold" style={{ fontSize: 16 }}>
+          <Text className="text-white font-bold text-base">
             Log Out
           </Text>
         </TouchableOpacity>

@@ -1,4 +1,3 @@
-//src/screens/LoginScreen.tsx
 import React, { useState } from "react";
 import {
   View,
@@ -9,7 +8,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { signInWithEmailAndPassword } from "firebase/auth";
@@ -22,8 +20,6 @@ type LoginScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   "Login"
 >;
-
-const { height } = Dimensions.get("window");
 
 export default function LoginScreen() {
   const [email, setEmail] = useState("");
@@ -38,22 +34,15 @@ export default function LoginScreen() {
   }
 
   function getErrorMessage(errorCode: string): string {
-    switch (errorCode) {
-      case "auth/invalid-credential":
-        return "Invalid email or password";
-      case "auth/user-not-found":
-        return "No account found with this email";
-      case "auth/wrong-password":
-        return "Incorrect password";
-      case "auth/invalid-email":
-        return "Invalid email address";
-      case "auth/too-many-requests":
-        return "Too many attempts. Please try again later";
-      case "auth/network-request-failed":
-        return "Network error. Please check your connection";
-      default:
-        return "Login failed. Please try again";
-    }
+    const errorMessages: Record<string, string> = {
+      "auth/invalid-credential": "Invalid email or password",
+      "auth/user-not-found": "No account found with this email",
+      "auth/wrong-password": "Incorrect password",
+      "auth/invalid-email": "Invalid email address",
+      "auth/too-many-requests": "Too many attempts. Please try again later",
+      "auth/network-request-failed": "Network error. Please check your connection",
+    };
+    return errorMessages[errorCode] || "Login failed. Please try again";
   }
 
   async function handleLogin() {
@@ -77,7 +66,6 @@ export default function LoginScreen() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      console.log("Success: Login successful");
     } catch (err: any) {
       const errorCode = err?.code || "";
       const errorMessage = getErrorMessage(errorCode);
@@ -96,12 +84,10 @@ export default function LoginScreen() {
     }
   }
 
-  const isSmallScreen = height < 700;
-
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
         className="flex-1"
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
@@ -110,18 +96,9 @@ export default function LoginScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View
-            className="flex-1 justify-center px-6"
-            style={{ paddingVertical: isSmallScreen ? 20 : 40 }}
-          >
-            <View
-              className="items-center mb-8"
-              style={{ marginBottom: isSmallScreen ? 24 : 48 }}
-            >
-              <Text
-                className="text-2xl font-bold text-gray-900 mb-2"
-                style={{ fontSize: isSmallScreen ? 24 : 30 }}
-              >
+          <View className="flex-1 justify-center px-6 py-10">
+            <View className="items-center mb-8">
+              <Text className="text-3xl font-bold text-gray-900 mb-2">
                 Welcome Back
               </Text>
               <Text className="text-gray-500 text-center text-sm">
@@ -132,10 +109,9 @@ export default function LoginScreen() {
             <View className="mb-6">
               <View>
                 <TextInput
-                  className={`border rounded-xl px-4 py-3.5 mb-1 bg-gray-50 text-gray-900 ${
+                  className={`border rounded-xl px-4 py-3.5 mb-1 bg-gray-50 text-gray-900 text-base ${
                     emailError ? "border-red-500" : "border-gray-200"
                   }`}
-                  style={{ fontSize: 16 }}
                   placeholder="Email"
                   placeholderTextColor="#9ca3af"
                   value={email}
@@ -156,10 +132,9 @@ export default function LoginScreen() {
 
               <View>
                 <TextInput
-                  className={`border rounded-xl px-4 py-3.5 mb-1 bg-gray-50 text-gray-900 ${
+                  className={`border rounded-xl px-4 py-3.5 mb-1 bg-gray-50 text-gray-900 text-base ${
                     passwordError ? "border-red-500" : "border-gray-200"
                   }`}
-                  style={{ fontSize: 16 }}
                   placeholder="Password"
                   placeholderTextColor="#9ca3af"
                   value={password}
@@ -183,21 +158,18 @@ export default function LoginScreen() {
                 onPress={handleLogin}
                 activeOpacity={0.8}
               >
-                <Text
-                  className="text-white text-center font-bold"
-                  style={{ fontSize: 16 }}
-                >
+                <Text className="text-white text-center font-bold text-base">
                   Log In
                 </Text>
               </TouchableOpacity>
             </View>
 
             <View className="flex-row items-center justify-center flex-wrap">
-              <Text className="text-gray-600" style={{ fontSize: 15 }}>
+              <Text className="text-gray-600 text-base">
                 Don't have an account?{" "}
               </Text>
               <TouchableOpacity onPress={() => navigation.navigate("Signup")}>
-                <Text className="text-black font-bold" style={{ fontSize: 15 }}>
+                <Text className="text-black font-bold text-base">
                   Sign Up
                 </Text>
               </TouchableOpacity>

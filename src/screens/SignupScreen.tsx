@@ -1,4 +1,3 @@
-//src/screens/SignupScreen.tsx
 import React, { useState } from "react";
 import {
   View,
@@ -9,7 +8,6 @@ import {
   KeyboardAvoidingView,
   Platform,
   ScrollView,
-  Dimensions,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
@@ -22,8 +20,6 @@ type SignupScreenNavigationProp = NativeStackNavigationProp<
   RootStackParamList,
   "Signup"
 >;
-
-const { height } = Dimensions.get("window");
 
 export default function SignupScreen() {
   const [email, setEmail] = useState("");
@@ -40,20 +36,14 @@ export default function SignupScreen() {
   }
 
   function getErrorMessage(errorCode: string): string {
-    switch (errorCode) {
-      case "auth/email-already-in-use":
-        return "This email is already registered";
-      case "auth/invalid-email":
-        return "Invalid email address";
-      case "auth/weak-password":
-        return "Password is too weak. Use at least 6 characters";
-      case "auth/network-request-failed":
-        return "Network error. Please check your connection";
-      case "auth/too-many-requests":
-        return "Too many attempts. Please try again later";
-      default:
-        return "Signup failed. Please try again";
-    }
+    const errorMessages: Record<string, string> = {
+      "auth/email-already-in-use": "This email is already registered",
+      "auth/invalid-email": "Invalid email address",
+      "auth/weak-password": "Password is too weak. Use at least 6 characters",
+      "auth/network-request-failed": "Network error. Please check your connection",
+      "auth/too-many-requests": "Too many attempts. Please try again later",
+    };
+    return errorMessages[errorCode] || "Signup failed. Please try again";
   }
 
   async function handleSignup() {
@@ -94,8 +84,7 @@ export default function SignupScreen() {
     try {
       const cred = await createUserWithEmailAndPassword(auth, email, password);
       await updateProfile(cred.user, { displayName });
-      console.log("Success: Signup successful");
-      navigation.navigate("Login");
+      // Navigation happens automatically via auth state change in App.tsx
     } catch (err: any) {
       const errorCode = err?.code || "";
       const errorMessage = getErrorMessage(errorCode);
@@ -113,12 +102,10 @@ export default function SignupScreen() {
     }
   }
 
-  const isSmallScreen = height < 700;
-
   return (
     <SafeAreaView className="flex-1 bg-white" edges={["top", "bottom"]}>
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
         className="flex-1"
         keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20}
       >
@@ -127,18 +114,9 @@ export default function SignupScreen() {
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}
         >
-          <View
-            className="flex-1 justify-center px-6"
-            style={{ paddingVertical: isSmallScreen ? 20 : 40 }}
-          >
-            <View
-              className="items-center mb-8"
-              style={{ marginBottom: isSmallScreen ? 24 : 48 }}
-            >
-              <Text
-                className="text-2xl font-bold text-gray-900 mb-2"
-                style={{ fontSize: isSmallScreen ? 24 : 30 }}
-              >
+          <View className="flex-1 justify-center px-6 py-10">
+            <View className="items-center mb-8">
+              <Text className="text-3xl font-bold text-gray-900 mb-2">
                 Create Account
               </Text>
               <Text className="text-gray-500 text-center text-sm">
@@ -149,10 +127,9 @@ export default function SignupScreen() {
             <View className="mb-6">
               <View>
                 <TextInput
-                  className={`border rounded-xl px-4 py-3.5 mb-1 bg-gray-50 text-gray-900 ${
+                  className={`border rounded-xl px-4 py-3.5 mb-1 bg-gray-50 text-gray-900 text-base ${
                     displayNameError ? "border-red-500" : "border-gray-200"
                   }`}
-                  style={{ fontSize: 16 }}
                   placeholder="Display Name"
                   placeholderTextColor="#9ca3af"
                   value={displayName}
@@ -160,7 +137,6 @@ export default function SignupScreen() {
                     setDisplayName(text);
                     setDisplayNameError("");
                   }}
-                  autoCapitalize="words"
                 />
                 {displayNameError ? (
                   <Text className="text-red-500 text-sm mb-3 px-1">
@@ -171,10 +147,9 @@ export default function SignupScreen() {
 
               <View>
                 <TextInput
-                  className={`border rounded-xl px-4 py-3.5 mb-1 bg-gray-50 text-gray-900 ${
+                  className={`border rounded-xl px-4 py-3.5 mb-1 bg-gray-50 text-gray-900 text-base ${
                     emailError ? "border-red-500" : "border-gray-200"
                   }`}
-                  style={{ fontSize: 16 }}
                   placeholder="Email"
                   placeholderTextColor="#9ca3af"
                   value={email}
@@ -183,8 +158,6 @@ export default function SignupScreen() {
                     setEmailError("");
                   }}
                   keyboardType="email-address"
-                  autoCapitalize="none"
-                  autoCorrect={false}
                 />
                 {emailError ? (
                   <Text className="text-red-500 text-sm mb-3 px-1">
@@ -195,10 +168,9 @@ export default function SignupScreen() {
 
               <View>
                 <TextInput
-                  className={`border rounded-xl px-4 py-3.5 mb-1 bg-gray-50 text-gray-900 ${
+                  className={`border rounded-xl px-4 py-3.5 mb-1 bg-gray-50 text-gray-900 text-base ${
                     passwordError ? "border-red-500" : "border-gray-200"
                   }`}
-                  style={{ fontSize: 16 }}
                   placeholder="Password"
                   placeholderTextColor="#9ca3af"
                   value={password}
@@ -207,8 +179,6 @@ export default function SignupScreen() {
                     setPasswordError("");
                   }}
                   secureTextEntry
-                  autoCapitalize="none"
-                  autoCorrect={false}
                 />
                 {passwordError ? (
                   <Text className="text-red-500 text-sm mb-3 px-1">
@@ -222,21 +192,18 @@ export default function SignupScreen() {
                 onPress={handleSignup}
                 activeOpacity={0.8}
               >
-                <Text
-                  className="text-white text-center font-bold"
-                  style={{ fontSize: 16 }}
-                >
+                <Text className="text-white text-center font-bold text-base">
                   Sign Up
                 </Text>
               </TouchableOpacity>
             </View>
 
             <View className="flex-row items-center justify-center flex-wrap">
-              <Text className="text-gray-600" style={{ fontSize: 15 }}>
+              <Text className="text-gray-600 text-base">
                 Already have an account?{" "}
               </Text>
               <TouchableOpacity onPress={() => navigation.navigate("Login")}>
-                <Text className="text-black font-bold" style={{ fontSize: 15 }}>
+                <Text className="text-black font-bold text-base">
                   Log In
                 </Text>
               </TouchableOpacity>
