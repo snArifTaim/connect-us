@@ -214,6 +214,12 @@ This project is private.
 
 ## 👤 Author
 
+MD. Arif Islam
+- 📱 Mobile App Developer (React Native & Expo)
+- 🚀 Crafting modern, user-friendly & high-performance mobile apps fast!
+
+ 🔗 [GitHub](https://github.com/snArifTaim/) [LinkedIn](https://www.linkedin.com/in/sn-arif-dev/)
+
 Connect Us - React Native App
 
 ---
